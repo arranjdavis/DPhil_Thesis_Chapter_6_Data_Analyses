@@ -307,17 +307,17 @@ total.data = subset(total.data, participant != "sub_34")
 
 ### THIS WILL CONVERT THE VOLTAGE DATA TO PERCENTAGES OF PARTICIPANTS' MAXIMUM GRIP ###
 
-#'ball_unit' is a variable in the MatLab script (lines 207-209) that is involved in the equations that convert voltage data to pixels on the screen
-total.data$ball_unit_easy = (300 * (50/40)) / (total.data$min_grip - total.data$max_grip)
-total.data$ball_unit_medium = (300 / (total.data$min_grip - total.data$max_grip))
-total.data$ball_unit_hard= (300 * (50/60)) / (total.data$min_grip - total.data$max_grip)
+#'bar_unit' is a variable in the MATLAB script (lines 191-193) that is involved in the equations that convert voltage data to pixels on the screen
+total.data$bar_unit_easy = (300 * (50/40)) / (total.data$min_grip - total.data$max_grip)
+total.data$bar_unit_medium = (300 / (total.data$min_grip - total.data$max_grip))
+total.data$bar_unit_hard= (300 * (50/60)) / (total.data$min_grip - total.data$max_grip)
 
-#'grip_px' is a variable in the MatLab script (line 316) that is involved in the equations that convert voltage data to pixels on the screen
+#'Grip_px' is a variable in the MATLAB script (line 303) that is involved in the equations that convert voltage data to pixels on the screen
 total.data$grip_px = 750 - total.data$voltage
 
-#'grip_dv' is a variable in the MatLab script (line 331) that is involved in the equations that convert voltage data to pixels on the screen
+#'Grip_dV' is a variable in the MATLAB script (line 320) that is involved in the equations that convert voltage data to pixels on the screen
 total.data$trial_difficulty = as.numeric(total.data$trial_difficulty)
-total.data$grip_dv = ifelse(total.data$trial_difficulty == 1, (total.data$grip_px / total.data$ball_unit_easy), ifelse(total.data$trial_difficulty == 2, (total.data$grip_px / total.data$ball_unit_medium), ifelse(total.data$trial_difficulty == 3, (total.data$grip_px / total.data$ball_unit_hard), NA)))
+total.data$grip_dv = ifelse(total.data$trial_difficulty == 1, (total.data$grip_px / total.data$bar_unit_easy), ifelse(total.data$trial_difficulty == 2, (total.data$grip_px / total.data$bar_unit_medium), ifelse(total.data$trial_difficulty == 3, (total.data$grip_px / total.data$bar_unit_hard), NA)))
 
 #this will give the actual voltage reading (instead of the pixel at which the bar is displayed)
 total.data$real_voltage = -1 * (total.data$grip_dv - total.data$min_grip)
@@ -559,7 +559,7 @@ for (i in subfolders) {
   
   D = readMat(paste(sub1, files1[2], sep = '/'))
   
-  #this gets the first 21 columns from the MatLab data set
+  #this gets the first 21 columns from the MATLAB data set
   tempdat = as.data.frame(D$record.dat[,1:21])
   
   #this gives participant data that is in a 42 item-long list
@@ -635,7 +635,7 @@ total.data$participant.char = sub("^", "sub_", total.data$Participant)
 total.data = merge(total.data, matdat, by.x= c("participant.char", "session_number", "trial_number"), by.y= c("participant", "experimental_session", "trial"))
 
 #this will drop the column containing the old participant classification system (the one with "sub_" as the prefix), and other unneeded or repetitive variables
-drops = c("participant.char", "trial_difficulty.y", "supp_cont", "placebo", "ball_unit_easy", "ball_unit_medium", "ball_unit_hard", "grip_px", "grip_dv")
+drops = c("participant.char", "trial_difficulty.y", "supp_cont", "placebo", "bar_unit_easy", "bar_unit_medium", "bar_unit_hard", "grip_px", "grip_dv")
 total.data = total.data[ , !(names(total.data) %in% drops)]
 
 #this will move the other 'Participant' variable to the first column in the data set
